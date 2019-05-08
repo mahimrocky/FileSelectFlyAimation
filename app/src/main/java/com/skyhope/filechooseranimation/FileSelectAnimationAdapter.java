@@ -1,6 +1,7 @@
 package com.skyhope.filechooseranimation;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,13 +54,16 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
         final FileContainer container = fileContainerList.get(i);
 
         holder.fileName.setText(container.getFileName());
-        holder.imageViewMain.setImageDrawable(container.getAppIcon());
+        //holder.imageViewMain.setImageDrawable(container.getAppIcon());
+        String url = "https://dev-ws.planetsushi.fr/DATAS/USER/slider/-paques144347.jpg";
+
+        Glide.with(context).load(url).into(holder.imageViewMain);
 
         holder.imageViewMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (listener != null) {
-                    listener.onGetItem(holder.itemView, container.getAppIcon());
+                    listener.onGetItem(holder.itemView, holder.imageViewMain.getDrawable());
                 }
             }
         });
@@ -83,7 +89,6 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
         FileAnimationVH(@NonNull View itemView) {
             super(itemView);
             imageViewMain = itemView.findViewById(R.id.image_view_main);
-
             fileName = itemView.findViewById(R.id.text_view_file_name);
 
         }

@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
 
         dummyImage.setLeft(mainView.getLeft());
         dummyImage.setTop(mainView.getTop());
-        // dummyImage.setBottom(mainView.getBottom());
-        // dummyImage.setRight(mainView.getRight());
+         dummyImage.setBottom(mainView.getBottom());
+         dummyImage.setRight(mainView.getRight());
 
 
         dummyImage.setImageDrawable(ic);
