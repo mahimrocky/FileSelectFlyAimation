@@ -58,7 +58,7 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
             @Override
             public void onClick(View view) {
                 if (listener != null) {
-                    listener.onGetItem(holder.imageViewAnim, container.getAppIcon());
+                    listener.onGetItem(holder.imageViewMain,holder.itemView, container.getAppIcon());
                 }
             }
         });
@@ -93,6 +93,6 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
     }
 
     interface ItemClickListener {
-        void onGetItem(ImageView view, Drawable icon);
+        void onGetItem(ImageView imageView,View mainView,Drawable img);
     }
 }

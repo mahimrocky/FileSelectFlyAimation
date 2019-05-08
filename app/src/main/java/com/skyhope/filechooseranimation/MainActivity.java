@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -28,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
     RecyclerView mRecyclerView;
     Button mButton;
     private WeakReference<Activity> mContextReference;
-
 
 
     @Override
@@ -73,15 +74,30 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
     }
 
     @Override
-    public void onGetItem(ImageView imageViewAnim, Drawable drawable) {
-        imageViewAnim.setVisibility(View.VISIBLE);
+    public void onGetItem(ImageView imageViewAnim, View mainView, Drawable ic) {
+        final ImageView dummyImage = findViewById(R.id.image_view_dymmy);
 
-        imageViewAnim.bringToFront();
+        dummyImage.setVisibility(View.VISIBLE);
+
+
+        Rect rectf = new Rect();
+        imageViewAnim.getGlobalVisibleRect(rectf);
+
+        dummyImage.setLeft(mainView.getLeft());
+        dummyImage.setTop(mainView.getTop());
+        dummyImage.setBottom(mainView.getBottom());
+        mainView.setRight(mainView.getRight());
+
+        Log.d("AnimationTest", "x: " + imageViewAnim.getX() + " y: " + imageViewAnim.getY());
+
+        dummyImage.setImageDrawable(ic);
+
+        dummyImage.bringToFront();
 
         float destX = mButton.getWidth();
         float destY = mButton.getHeight();
-        float originX = imageViewAnim.getWidth();
-        float originY = imageViewAnim.getHeight();
+        float originX = dummyImage.getWidth();
+        float originY = dummyImage.getHeight();
 
         final float endRadius = Math.max(destX, destY) / 2;
         final float startRadius = Math.max(originX, originY);
@@ -90,13 +106,13 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
         AnimationSet set = new AnimationSet(true);
 
         int[] src = new int[2];
-        imageViewAnim.getLocationOnScreen(src);
+        dummyImage.getLocationOnScreen(src);
 
         int[] dest = new int[2];
         mButton.getLocationOnScreen(dest);
 
-        float y = imageViewAnim.getY();
-        float x = imageViewAnim.getX();
+        float y = dummyImage.getY();
+        float x = dummyImage.getX();
 
         TranslateAnimation translateAnimation = new TranslateAnimation(x,
                 x + dest[0] - (src[0] + (originX * scaleFactor - 2 * endRadius * scaleFactor) / 2) + (0.5f * destX - scaleFactor * endRadius),
@@ -116,7 +132,23 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
         alphaAnimation.setDuration(1000);
         set.addAnimation(alphaAnimation);
 
+        set.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        imageViewAnim.startAnimation(set);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                dummyImage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        dummyImage.startAnimation(set);
     }
 }
