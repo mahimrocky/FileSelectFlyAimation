@@ -52,13 +52,12 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
 
         holder.fileName.setText(container.getFileName());
         holder.imageViewMain.setImageDrawable(container.getAppIcon());
-        holder.imageViewAnim.setImageDrawable(container.getAppIcon());
 
         holder.imageViewMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (listener != null) {
-                    listener.onGetItem(holder.imageViewMain,holder.itemView, container.getAppIcon());
+                    listener.onGetItem(holder.itemView, container.getAppIcon());
                 }
             }
         });
@@ -78,13 +77,13 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
     }
 
     class FileAnimationVH extends RecyclerView.ViewHolder {
-        ImageView imageViewMain, imageViewAnim;
+        ImageView imageViewMain;
         TextView fileName;
 
         FileAnimationVH(@NonNull View itemView) {
             super(itemView);
             imageViewMain = itemView.findViewById(R.id.image_view_main);
-            imageViewAnim = itemView.findViewById(R.id.image_view_anim);
+
             fileName = itemView.findViewById(R.id.text_view_file_name);
 
         }
@@ -93,6 +92,6 @@ public class FileSelectAnimationAdapter extends RecyclerView.Adapter<FileSelectA
     }
 
     interface ItemClickListener {
-        void onGetItem(ImageView imageView,View mainView,Drawable img);
+        void onGetItem(View mainView,Drawable img);
     }
 }

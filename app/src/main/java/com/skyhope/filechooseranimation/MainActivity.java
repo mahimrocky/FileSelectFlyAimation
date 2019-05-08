@@ -1,16 +1,21 @@
 package com.skyhope.filechooseranimation;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
     RecyclerView mRecyclerView;
     Button mButton;
     private WeakReference<Activity> mContextReference;
+    int actionbarheight;
 
 
     @Override
@@ -56,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
         mAdapter = new FileSelectAnimationAdapter(this, this);
 
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        //mRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
-        //mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -71,24 +77,34 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
                 startActivity(new Intent(MainActivity.this, com.skyhope.flytocartanimation.MainActivity.class));
             }
         });
+
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            actionbarheight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+
     }
 
     @Override
-    public void onGetItem(ImageView imageViewAnim, View mainView, Drawable ic) {
+    public void onGetItem( View mainView, Drawable ic) {
+
+        // animateView(mainView, ic);
+
+        myTransition(mainView, ic);
+
+    }
+
+    private void myTransition(View mainView, Drawable ic) {
         final ImageView dummyImage = findViewById(R.id.image_view_dymmy);
 
         dummyImage.setVisibility(View.VISIBLE);
 
 
-        Rect rectf = new Rect();
-        imageViewAnim.getGlobalVisibleRect(rectf);
-
         dummyImage.setLeft(mainView.getLeft());
         dummyImage.setTop(mainView.getTop());
-        dummyImage.setBottom(mainView.getBottom());
-        mainView.setRight(mainView.getRight());
+        // dummyImage.setBottom(mainView.getBottom());
+        // dummyImage.setRight(mainView.getRight());
 
-        Log.d("AnimationTest", "x: " + imageViewAnim.getX() + " y: " + imageViewAnim.getY());
 
         dummyImage.setImageDrawable(ic);
 
@@ -114,12 +130,11 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
         float y = dummyImage.getY();
         float x = dummyImage.getX();
 
-        TranslateAnimation translateAnimation = new TranslateAnimation(x,
-                x + dest[0] - (src[0] + (originX * scaleFactor - 2 * endRadius * scaleFactor) / 2) + (0.5f * destX - scaleFactor * endRadius),
-                y, y + dest[1] - (src[1] + (originY * scaleFactor - 2 * endRadius * scaleFactor) / 2) + (0.5f * destY - scaleFactor * endRadius));
+        TranslateAnimation translateAnimation = new TranslateAnimation(x, mButton.getX(), y, mButton.getY());
 
-        translateAnimation.setFillAfter(true);
-        translateAnimation.setFillEnabled(true);
+       /* TranslateAnimation translateAnimation = new TranslateAnimation(x,
+                x + dest[0] - (src[0] + (originX * scaleFactor - 2 * endRadius * scaleFactor) / 2) + (0.5f * destX - scaleFactor * endRadius),
+                y, y + dest[1] - (src[1] + (originY * scaleFactor - 2 * endRadius * scaleFactor) / 2) + (0.5f * destY - scaleFactor * endRadius));*/
 
         translateAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
 
@@ -150,5 +165,24 @@ public class MainActivity extends AppCompatActivity implements FileSelectAnimati
         });
 
         dummyImage.startAnimation(set);
+    }
+
+    private void animateView(View foodCardView, Drawable b) {
+        final ImageView mDummyImgView = findViewById(R.id.image_view_dymmy);
+
+        mDummyImgView.setImageDrawable(b);
+        mDummyImgView.setVisibility(View.VISIBLE);
+        int u[] = new int[2];
+        mButton.getLocationInWindow(u);
+        mDummyImgView.setLeft(foodCardView.getLeft());
+        mDummyImgView.setTop(foodCardView.getTop());
+        AnimatorSet animSetXY = new AnimatorSet();
+        ObjectAnimator y = ObjectAnimator.ofFloat(mDummyImgView, "translationY", mDummyImgView.getTop(), u[1]);
+        ObjectAnimator x = ObjectAnimator.ofFloat(mDummyImgView, "translationX", mDummyImgView.getLeft(), u[0]);
+        ObjectAnimator sy = ObjectAnimator.ofFloat(mDummyImgView, "scaleY", 0.8f, 0.5f);
+        ObjectAnimator sx = ObjectAnimator.ofFloat(mDummyImgView, "scaleX", 0.8f, 0.5f);
+        animSetXY.playTogether(x, y, sx, sy);
+        animSetXY.setDuration(1000);
+        animSetXY.start();
     }
 }
